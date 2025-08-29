@@ -1,0 +1,57 @@
+PROJECT: Motor Protection & Auto-Recovery Ladder (Pseudoladder)
+
+Inputs:
+  I0.0  - Start PB (NO)
+  I0.1  - Stop PB (NC)
+  I0.2  - Emergency Stop (E-STOP) (NC)
+  I0.3  - Overload Trip (from Thermal Relay)
+  I0.4  - Remote SCADA Stop (digital)
+  I0.5  - Local/Remote Selector Switch (0=Local,1=Remote)
+
+Outputs:
+  Q0.0  - Motor Contactor Coil (M)
+  Q0.1  - Motor Running Lamp
+  Q0.2  - Alarm (Buzzer)
+  Q0.3  - Auto-Recovery Allowed (internal bit)
+
+Internal Bits:
+  M0.0  - Seal-in (self-hold) for M
+  M0.1  - Overload Latch
+  M0.2  - SCADA E-Stop Latch
+
+Rungs (descriptions):
+
+RUNG 1: START/STOP SEAL-IN
+  If (Start PB I0.0 AND NOT Stop PB I0.1 AND NOT E-Stop I0.2 AND NOT Overload I0.3 AND Local/Remote Selector = Local)
+    -> Set M0.0 (Seal-in)
+  Seal-in is latched; Motor output Q0.0 = M0.0 AND NOT Overload AND NOT E-Stop AND NOT SCADA Stop
+
+RUNG 2: REMOTE CONTROL
+  If (Local/Remote Selector = Remote)
+    If (Remote SCADA Start command received AND NOT Overload AND NOT E-Stop)
+      -> Set M0.0
+    If (Remote SCADA Stop command)
+      -> Reset M0.0
+
+RUNG 3: OVERLOAD LATCH
+  If (Overload I0.3 = TRUE)
+    -> Set M0.1 (Overload Latch), Reset M0.0, Activate Alarm Q0.2
+  Overload latch remains until manual reset.
+
+RUNG 4: AUTO-RECOVERY LOGIC
+  If (Auto-Recovery Allowed AND Overload cleared AND Overload Latch = FALSE)
+    -> Try auto-restart after delay (e.g., TON 10s) up to 2 attempts.
+  If attempts exceed limit
+    -> Lockout and require manual reset.
+
+RUNG 5: ALARMS & HMI TAGS
+  Map digital bits to tags for SCADA:
+    - Motor_Status = Q0.0
+    - Overload_Flag = M0.1
+    - EStop_Flag = I0.2
+    - AutoRecovery_Count
+
+Notes:
+- Safety-critical trips (E-STOP, Overload) are handled locally by PLC.
+- SCADA/Edge only advise & monitor; it can request remote stop/start via digital inputs.
+- Provide HMI buttons for Manual Reset, Remote Start/Stop, and Auto-Recovery toggle.
