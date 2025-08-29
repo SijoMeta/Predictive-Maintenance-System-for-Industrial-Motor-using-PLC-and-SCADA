@@ -1,0 +1,10 @@
+{
+  "tags": [
+    {"name":"M1.Temp","type":"float","topic":"plant/motor/M1/telemetry","path":"temp"},
+    {"name":"M1.Vib","type":"float","topic":"plant/motor/M1/telemetry","path":"vibration"},
+    {"name":"M1.Status","type":"int","topic":"plant/motor/M1/telemetry","path":"status"},
+    {"name":"M1.Overload","type":"bool","topic":"plc/motor/M1/overload","path":""},
+    {"name":"M1.ESTOP","type":"bool","topic":"plc/motor/M1/estop","path":""},
+    {"name":"M1.AutoRecover","type":"bool","topic":"plc/motor/M1/autorecover","path":""}
+  ]
+}
