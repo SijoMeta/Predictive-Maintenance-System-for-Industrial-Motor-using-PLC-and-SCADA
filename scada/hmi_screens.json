@@ -1,0 +1,16 @@
+{
+  "screens": [
+    {
+      "id": "main",
+      "title": "Motor M1 - Overview",
+      "widgets": [
+        {"type":"tank","tag":"M1.Temp","position":[10,10],"size":[200,300],"label":"Motor Temp (°C)"},
+        {"type":"gauge","tag":"M1.Vib","position":[220,10],"size":[200,200],"label":"Vibration (g)"},
+        {"type":"indicator","tag":"M1.Status","position":[10,320],"size":[120,40],"label":"Motor On"},
+        {"type":"button","action":"remote_stop","position":[140,320],"size":[120,40],"label":"Remote Stop"},
+        {"type":"alarm_list","position":[10,370],"size":[400,120],"label":"Active Alarms"},
+        {"type":"trend","tags":["M1.Temp","M1.Vib"],"position":[420,10],"size":[600,300],"label":"Trend: Temp & Vib"}
+      ]
+    }
+  ]
+}
